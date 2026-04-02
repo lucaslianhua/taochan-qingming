@@ -79,7 +79,10 @@
             border-radius: 50%;
         }
 
-        /* --- EFEITOS DO HEADER DINÂMICO --- */
+/* --- EFEITOS DO HEADER DINÂMICO --- */
+        #app-header {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
         #app-header.scrolled {
             padding-top: max(env(safe-area-inset-top), 1rem);
             padding-bottom: 0.75rem;
@@ -90,8 +93,12 @@
             border-bottom-left-radius: 1.5rem;
             border-bottom-right-radius: 1.5rem;
         }
+        .hide-on-scroll {
+            overflow: hidden; /* Impede o texto de vazar e bugar o layout */
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
         #app-header.scrolled .hide-on-scroll {
-            max-height: 0;
+            max-height: 0 !important;
             opacity: 0;
             margin-bottom: 0;
             transform: scaleY(0);
@@ -99,6 +106,10 @@
         #app-header.scrolled #main-title {
             font-size: 2.25rem; /* text-4xl */
             margin-bottom: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .show-on-scroll {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         #app-header.scrolled .show-on-scroll {
             opacity: 1;
@@ -110,25 +121,26 @@
 
     <div class="w-full max-w-md bg-qingming-light h-[100dvh] shadow-2xl relative flex flex-col overflow-hidden">
         
-<header id="app-header" class="relative bg-qingming-dark text-white pt-10 pb-8 px-6 rounded-b-[2.5rem] shadow-md shrink-0 z-10 pt-safe transition-all duration-300">
-            <div class="bg-layer absolute inset-0 overflow-hidden rounded-b-[2.5rem] opacity-25 transition-all duration-300">
+<header id="app-header" class="relative bg-qingming-dark text-white pt-10 pb-8 px-6 rounded-b-[2.5rem] shadow-md shrink-0 z-10 pt-safe">
+            <div class="bg-layer absolute inset-0 overflow-hidden rounded-b-[2.5rem] opacity-25 transition-all duration-400">
                 <img src="https://images.unsplash.com/photo-1555448248-2571daf6344b?auto=format&fit=crop&w=800&q=80" alt="Paisagem de natureza" class="w-full h-full object-cover">
             </div>
-            <div class="bg-layer absolute inset-0 bg-gradient-to-t from-qingming-dark via-qingming-dark/80 to-transparent opacity-90 rounded-b-[2.5rem] transition-all duration-300"></div>
+            <div class="bg-layer absolute inset-0 bg-gradient-to-t from-qingming-dark via-qingming-dark/80 to-transparent opacity-90 rounded-b-[2.5rem] transition-all duration-400"></div>
+            
             <div class="relative z-10">
-                <div class="hide-on-scroll flex justify-between items-center mb-3 origin-top transition-all duration-300 max-h-[50px]">
+                <div class="hide-on-scroll flex justify-between items-center mb-3 origin-top max-h-[50px]">
                     <span class="px-3 py-1 bg-white/20 rounded-full text-[10px] font-bold tracking-wider backdrop-blur-sm border border-white/30 uppercase shadow-sm">Abril • 15º dia após o Equinócio da Primavera</span>
                     <i class="fas fa-leaf text-qingming-accent drop-shadow-md"></i>
                 </div>
                 
                 <div class="flex justify-between items-center gap-3">
-                    <h1 id="main-title" class="text-5xl font-serif font-bold mb-1 tracking-wide flex items-baseline drop-shadow-lg transition-all duration-300 origin-left">
+                    <h1 id="main-title" class="text-5xl font-serif font-bold mb-1 tracking-wide flex items-baseline drop-shadow-lg origin-left">
                         清明节
                     </h1>
-                    <h2 class="show-on-scroll text-xl font-serif font-semibold drop-shadow-md opacity-0 max-w-0 overflow-hidden transition-all duration-300 whitespace-nowrap">Qingming Jie</h2>
+                    <h2 class="show-on-scroll text-xl font-serif font-semibold drop-shadow-md opacity-0 max-w-0 overflow-hidden whitespace-nowrap">Qingming Jie</h2>
                 </div>
 
-                <div class="hide-on-scroll origin-top transition-all duration-300 max-h-[150px]">
+                <div class="hide-on-scroll origin-top max-h-[150px]">
                     <h2 class="text-2xl font-serif font-semibold mb-2 drop-shadow-md">Qingming Jie</h2>
                     <p class="text-sm font-light text-gray-200 leading-relaxed opacity-95">
                         Festival da Claridade Pura. Uma síntese complexa entre a reverência aos ancestrais (Shen Zhong Zhui Yuan) e a efervescência da primavera.
@@ -383,34 +395,37 @@
 <script>
         // Lógica de troca de abas (Tabs) para o App
         function openTab(tabId, btn) {
-            // Oculta todos os conteúdos com animação css
             document.querySelectorAll('.tab-content').forEach(el => {
                 el.classList.remove('active');
             });
-            // Mostra o conteúdo selecionado
             document.getElementById(tabId).classList.add('active');
 
-            // Reseta botões da nav
             document.querySelectorAll('.nav-item').forEach(el => {
                 el.classList.remove('active');
             });
-            
-            // Ativa o botão clicado
             btn.classList.add('active');
 
-            // Scroll suave para o topo do 'main' garantindo que o novo conteúdo seja lido do início
+            // Scroll suave para o topo
             document.getElementById('scroll-area').scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Lógica de encolhimento dinâmico do Header
+        // Lógica de encolhimento dinâmico do Header com Histerese (Antiglide)
         const scrollArea = document.getElementById('scroll-area');
         const header = document.getElementById('app-header');
+        let isScrolled = false;
 
         scrollArea.addEventListener('scroll', () => {
-            if (scrollArea.scrollTop > 30) {
+            const currentScroll = scrollArea.scrollTop;
+            
+            // Só encolhe se a pessoa descer de forma intencional (mais de 60px)
+            if (currentScroll > 60 && !isScrolled) {
                 header.classList.add('scrolled');
-            } else {
+                isScrolled = true;
+            } 
+            // Só volta a expandir se a pessoa subir quase de volta ao topo absoluto (menos de 15px)
+            else if (currentScroll < 15 && isScrolled) {
                 header.classList.remove('scrolled');
+                isScrolled = false;
             }
         });
     </script>
