@@ -36,9 +36,17 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; scroll-behavior: smooth; }
         
-        /* Ajuste para dispositivos móveis modernos (iPhone X+, Androids sem borda) */
+        /* Ajuste para dispositivos móveis modernos */
         .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
-        .pt-safe { padding-top: env(safe-area-inset-top, 20px); }
+        .pt-safe { padding-top: env(safe-area-inset-top); }
+
+        /* Remove o "quadrado estranho" de seleção ao tocar na tela */
+        * {
+            -webkit-tap-highlight-color: transparent !important;
+        }
+        button:focus, a:focus {
+            outline: none !important;
+        }
 
         /* Animações de entrada para as abas */
         .tab-content {
@@ -57,7 +65,6 @@
         .nav-item {
             position: relative;
             transition: all 0.3s ease;
-            -webkit-tap-highlight-color: transparent;
         }
         .nav-item.active {
             color: #557A46;
@@ -79,304 +86,286 @@
             border-radius: 50%;
         }
 
-        /* --- EFEITOS DO HEADER DINÂMICO PREMIUM --- */
+        /* --- EFEITOS DO HEADER DINÂMICO --- */
         #app-header {
-            /* Transição estilo "Mola" nativa da Apple/Android */
-            transition: all 0.5s cubic-bezier(0.3, 1, 0.3, 1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         #app-header.scrolled {
-            padding-bottom: 1rem;
+            padding-top: max(env(safe-area-inset-top), 1rem);
+            padding-bottom: 0.75rem;
             border-bottom-left-radius: 1.5rem;
             border-bottom-right-radius: 1.5rem;
-        }
-        .bg-layer {
-            transition: all 0.5s cubic-bezier(0.3, 1, 0.3, 1);
         }
         #app-header.scrolled .bg-layer {
             border-bottom-left-radius: 1.5rem;
             border-bottom-right-radius: 1.5rem;
         }
-        
-        /* Oculta suavemente sem mexer no layout do scroll */
         .hide-on-scroll {
-            transition: all 0.4s cubic-bezier(0.3, 1, 0.3, 1);
-            max-height: 200px; /* Grande o suficiente para o texto */
-            opacity: 1;
             overflow: hidden;
-            transform-origin: top;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         #app-header.scrolled .hide-on-scroll {
-            max-height: 0;
+            max-height: 0 !important;
             opacity: 0;
-            margin-bottom: 0 !important;
-            transform: translateY(-15px) scaleY(0.8);
+            margin-bottom: 0;
+            transform: scaleY(0);
         }
-
-        /* Títulos */
         #main-title {
-            transition: all 0.5s cubic-bezier(0.3, 1, 0.3, 1);
-            transform-origin: left center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: left bottom;
         }
         #app-header.scrolled #main-title {
-            transform: scale(0.65); /* Diminui a fonte visualmente sem causar lag de renderização */
+            font-size: 2.25rem; /* text-4xl */
+            margin-bottom: 0;
         }
-        
         .show-on-scroll {
-            opacity: 0;
-            max-width: 0;
-            transform: translateX(15px);
-            transition: all 0.5s cubic-bezier(0.3, 1, 0.3, 1);
-            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         #app-header.scrolled .show-on-scroll {
             opacity: 1;
             max-width: 200px;
-            transform: translateX(0);
         }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-800 font-sans antialiased flex justify-center selection:bg-qingming-accent selection:text-white">
 
-    <div class="w-full max-w-md bg-qingming-light h-[100dvh] shadow-2xl relative overflow-hidden">
+    <div class="w-full max-w-md bg-qingming-light h-[100dvh] shadow-2xl relative flex flex-col overflow-hidden">
         
-        <!-- HEADER AGORA É FLUTUANTE (ABSOLUTE) E INDEPENDENTE -->
-        <header id="app-header" class="absolute top-0 left-0 w-full bg-qingming-dark text-white pt-10 pb-8 px-6 rounded-b-[2.5rem] shadow-md z-20 pt-safe">
-            <div class="bg-layer absolute inset-0 overflow-hidden rounded-b-[2.5rem] opacity-25">
+        <header id="app-header" class="relative bg-qingming-dark text-white pt-10 pb-8 px-6 rounded-b-[2.5rem] shadow-md shrink-0 z-20 pt-safe">
+            <div class="bg-layer absolute inset-0 overflow-hidden rounded-b-[2.5rem] opacity-25 transition-all duration-400">
                 <img src="https://images.unsplash.com/photo-1555448248-2571daf6344b?auto=format&fit=crop&w=800&q=80" alt="Paisagem de natureza" class="w-full h-full object-cover">
             </div>
-            <div class="bg-layer absolute inset-0 bg-gradient-to-t from-qingming-dark via-qingming-dark/80 to-transparent opacity-90 rounded-b-[2.5rem]"></div>
+            <div class="bg-layer absolute inset-0 bg-gradient-to-t from-qingming-dark via-qingming-dark/80 to-transparent opacity-90 rounded-b-[2.5rem] transition-all duration-400"></div>
             
-            <div class="relative z-10 flex flex-col justify-end">
-                <div class="hide-on-scroll flex justify-between items-center mb-3">
+            <div class="relative z-10">
+                <div class="hide-on-scroll flex justify-between items-center mb-3 origin-top max-h-[50px]">
                     <span class="px-3 py-1 bg-white/20 rounded-full text-[10px] font-bold tracking-wider backdrop-blur-sm border border-white/30 uppercase shadow-sm">Abril • 15º dia após o Equinócio da Primavera</span>
                     <i class="fas fa-leaf text-qingming-accent drop-shadow-md"></i>
                 </div>
                 
-                <div class="flex items-center gap-3">
-                    <h1 id="main-title" class="text-5xl font-serif font-bold mb-1 tracking-wide drop-shadow-lg flex items-baseline">
+                <div class="flex justify-between items-center gap-3">
+                    <h1 id="main-title" class="text-5xl font-serif font-bold mb-1 tracking-wide flex items-baseline drop-shadow-lg">
                         清明节
                     </h1>
-                    <h2 class="show-on-scroll text-xl font-serif font-semibold drop-shadow-md whitespace-nowrap mt-2">Qingming Jie</h2>
+                    <h2 class="show-on-scroll text-xl font-serif font-semibold drop-shadow-md opacity-0 max-w-0 overflow-hidden whitespace-nowrap">Qīngmíng Jié</h2>
                 </div>
 
-                <div class="hide-on-scroll mt-1">
-                    <h2 class="text-2xl font-serif font-semibold mb-2 drop-shadow-md">Qingming Jie</h2>
+                <div class="hide-on-scroll origin-top max-h-[150px]">
+                    <h2 class="text-2xl font-serif font-semibold mb-2 drop-shadow-md">Qīngmíng Jié</h2>
                     <p class="text-sm font-light text-gray-200 leading-relaxed opacity-95">
-                        Festival da Claridade Pura. Uma síntese complexa entre a reverência aos ancestrais (Shen Zhong Zhui Yuan) e a efervescência da primavera.
+                        Festival da Claridade Pura. Uma síntese complexa entre a reverência aos ancestrais (Shèn Zhōng Zhuī Yuǎn) e a efervescência da primavera.
                     </p>
                 </div>
             </div>
         </header>
 
-        <!-- MAIN OCUPA A TELA TODA E PASSA POR BAIXO DO HEADER (INSET-0) -->
-        <main id="scroll-area" class="absolute inset-0 overflow-y-auto p-5 pb-32 no-scrollbar bg-qingming-light z-10">
+        <main id="scroll-area" class="flex-grow overflow-y-auto p-5 pb-32 no-scrollbar bg-qingming-light relative z-10">
             
-            <!-- ESPAÇADOR: Empurra o texto pra baixo pra não esconder no carregamento inicial -->
-            <div id="header-spacer" class="w-full shrink-0"></div>
-            
-            <section id="origens" class="tab-content active">
-                <div class="flex items-center mb-6">
-                    <div class="w-1.5 h-6 bg-qingming-accent rounded-full mr-3 shadow-sm"></div>
-                    <h3 class="text-2xl font-serif text-qingming-dark font-bold">A Trindade das Origens</h3>
-                </div>
-                <p class="text-sm text-gray-600 mb-5 leading-relaxed">
-                    A configuração atual do Qingming possui mais de 2.500 anos e é a fusão orgânica de três tradições ancestrais distintas:
-                </p>
-                
-                <div class="space-y-4">
-                    <div class="bg-white rounded-3xl p-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 relative overflow-hidden transition-transform duration-200 active:scale-[0.98]">
-                        <div class="absolute top-0 right-0 w-16 h-16 bg-green-50 rounded-bl-full -z-0"></div>
-                        <div class="flex items-center mb-2 text-qingming-green relative z-10">
-                            <i class="fas fa-sun fa-lg w-8"></i>
-                            <h4 class="font-bold text-md">1. O Termo Solar (Jieqi)</h4>
-                        </div>
-                        <p class="text-sm text-gray-600 leading-relaxed relative z-10">
-                            Único dos 24 termos solares a evoluir para feriado nacional. Originalmente, era um marcador agrário vital. O ditado "清明前后，种瓜点豆" (Antes e depois do Qingming, plante melões e feijões) destaca seu papel no despertar da agricultura.
-                        </p>
+            <!-- Pt-4 adicionado para dar espaço natural e evitar que o título fique colado no cabeçalho encolhido -->
+            <div class="pt-4">
+                <section id="origens" class="tab-content active">
+                    <div class="flex items-center mb-6">
+                        <div class="w-1.5 h-6 bg-qingming-accent rounded-full mr-3 shadow-sm"></div>
+                        <h3 class="text-2xl font-serif text-qingming-dark font-bold">A Trindade das Origens</h3>
                     </div>
-
-                    <div class="bg-white rounded-3xl p-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 relative overflow-hidden transition-transform duration-200 active:scale-[0.98]">
-                        <div class="absolute top-0 right-0 w-16 h-16 bg-blue-50 rounded-bl-full -z-0"></div>
-                        <div class="flex items-center mb-2 text-blue-500 relative z-10">
-                            <i class="fas fa-snowflake fa-lg w-8"></i>
-                            <h4 class="font-bold text-md">2. Festival Hanshi (Comida Fria)</h4>
-                        </div>
-                        <p class="text-sm text-gray-600 leading-relaxed relative z-10">
-                            Nasceu da trágica lenda de Jie Zitui (Dinastia Zhou), um súdito leal que cortou a própria carne para alimentar seu senhor, mas morreu queimado na floresta. Em luto, o Duque Wen declarou um período de proibição de fogueiras, originando a tradição de consumir apenas comidas frias.
-                        </p>
-                    </div>
-
-                    <div class="bg-white rounded-3xl p-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 relative overflow-hidden transition-transform duration-200 active:scale-[0.98]">
-                        <div class="absolute top-0 right-0 w-16 h-16 bg-purple-50 rounded-bl-full -z-0"></div>
-                        <div class="flex items-center mb-2 text-purple-500 relative z-10">
-                            <i class="fas fa-water fa-lg w-8"></i>
-                            <h4 class="font-bold text-md">3. Festival Shangsi</h4>
-                        </div>
-                        <p class="text-sm text-gray-600 leading-relaxed relative z-10">
-                            Antigo rito de purificação realizado no 3º dia do 3º mês lunar nas margens dos rios para afastar más energias. Dele o Qingming herdou a tradição do <i>Taqing</i> (Passeio no Verde) e as celebrações primaveris de vitalidade.
-                        </p>
-                    </div>
-                </div>
-            </section>
-
-            <section id="rituais" class="tab-content">
-                <div class="flex items-center mb-6">
-                    <div class="w-1.5 h-6 bg-qingming-green rounded-full mr-3 shadow-sm"></div>
-                    <h3 class="text-2xl font-serif text-qingming-dark font-bold">Luto e Vitalidade</h3>
-                </div>
-                
-                <p class="text-sm text-gray-600 mb-5 leading-relaxed">
-                    A dualidade do festival equilibra a solene piedade filial confucionista (孝) com intensas atividades ao ar livre para purgar o frio do inverno.
-                </p>
-
-                <div class="grid grid-cols-1 gap-4">
-                    <div class="bg-white p-5 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border-l-4 border-l-gray-500 transition-transform duration-200 active:scale-[0.98]">
-                        <h4 class="font-bold text-gray-800 flex items-center mb-2"><i class="fas fa-broom w-6 text-gray-500"></i> Limpeza de Túmulos (扫墓)</h4>
-                        <p class="text-sm text-gray-600">O ato de "varrer os túmulos" (Saomu). As famílias removem ervas daninhas, repintam inscrições desbotadas e oferecem incenso, chá, vinho e papel-moeda, conectando-se espiritualmente aos ancestrais.</p>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border-l-4 border-l-green-500 transition-transform duration-200 active:scale-[0.98]">
-                        <h4 class="font-bold text-gray-800 flex items-center mb-2"><i class="fas fa-tree w-6 text-green-500"></i> Ramos de Salgueiro (插柳)</h4>
-                        <p class="text-sm text-gray-600">Ramos de salgueiro são usados no cabelo ou pendurados nas portas. Conhecido como "madeira que afasta fantasmas" (鬼怖木) por influência budista. A tradição também carrega um famoso ditado sobre longevidade: "Se não usar salgueiro no Qingming, o rosto jovem logo terá cabelos brancos" (清明不戴柳，红颜成皓首).</p>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border-l-4 border-l-blue-400 transition-transform duration-200 active:scale-[0.98]">
-                        <h4 class="font-bold text-gray-800 flex items-center mb-2"><i class="fas fa-paper-plane w-6 text-blue-500"></i> Pipas Noturnas (放风筝)</h4>
-                        <p class="text-sm text-gray-600">Empinadas dia e noite. À noite, pequenas lanternas coloridas ("lanternas divinas") são amarradas à linha. Tradicionalmente, corta-se a linha para que a pipa voe longe, simbolizando o desapego de doenças e infortúnios.</p>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border-l-4 border-l-orange-500 transition-transform duration-200 active:scale-[0.98]">
-                        <h4 class="font-bold text-gray-800 flex items-center mb-2"><i class="fas fa-futbol w-6 text-orange-500"></i> Cuju, Balanços e Bahe</h4>
-                        <p class="text-sm text-gray-600">Para evitar que o corpo adoecesse devido à ingestão de apenas comida fria, esportes vigorosos tornaram-se tradição: o <i>Cuju</i> (futebol antigo), os Balanços (feitos em galhos de árvores) e o <i>Bahe</i> (Cabo de Guerra, originalmente para orar por colheitas).</p>
-                    </div>
-                </div>
-            </section>
-
-            <section id="sabores" class="tab-content">
-                <div class="flex items-center mb-6">
-                    <div class="w-1.5 h-6 bg-qingming-accent rounded-full mr-3 shadow-sm"></div>
-                    <h3 class="text-2xl font-serif text-qingming-dark font-bold">Gastronomia Hanshi</h3>
-                </div>
-                
-                <p class="text-sm text-gray-600 mb-5 leading-relaxed">
-                    A antiga restrição de não acender o fogo gerou uma culinária engenhosa de alimentos duráveis e sazonais, repletos de simbolismo geográfico.
-                </p>
-                
-                <div class="flex flex-col space-y-4">
-                    <div class="flex items-center bg-white p-4 rounded-3xl shadow-sm border border-gray-100 transition-transform duration-200 active:scale-[0.98]">
-                        <div class="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center text-green-600 shrink-0">
-                            <i class="fas fa-leaf fa-2x"></i>
-                        </div>
-                        <div class="ml-4">
-                            <h4 class="font-bold text-gray-800">Qingtuan (青团)</h4>
-                            <p class="text-xs text-gray-500 mt-1">Símbolo do sul (Jiangnan). Bolinhos de farinha de arroz glutinoso tingidos de verde com sumo de ervas selvagens (como artemísia), tradicionalmente recheados com pasta de feijão ou carne, ganhando também inovações modernas como gema de ovo salgada com carne seca.</p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center bg-white p-4 rounded-3xl shadow-sm border border-gray-100 transition-transform duration-200 active:scale-[0.98]">
-                        <div class="w-16 h-16 bg-yellow-50 rounded-2xl flex items-center justify-center text-yellow-600 shrink-0">
-                            <i class="fas fa-cookie-bite fa-2x"></i>
-                        </div>
-                        <div class="ml-4">
-                            <h4 class="font-bold text-gray-800">Sanzi (馓子)</h4>
-                            <p class="text-xs text-gray-500 mt-1">Massa fina e frita, trançada e extremamente crocante, feita principalmente de trigo no norte e de farinha de arroz no sul da China. Popular tanto entre a etnia Han quanto entre diversas minorias no norte e oeste da China.</p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center bg-white p-4 rounded-3xl shadow-sm border border-gray-100 transition-transform duration-200 active:scale-[0.98]">
-                        <div class="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 shrink-0">
-                            <i class="fas fa-seedling fa-2x"></i>
-                        </div>
-                        <div class="ml-4">
-                            <h4 class="font-bold text-gray-800">Nuan Gu Bao (暖菇包)</h4>
-                            <p class="text-xs text-gray-500 mt-1">Típico de Taining (Fujian). Pãezinhos feitos com a erva selvagem <i>Nuan Gu</i> (Gnaphalium), colhida na primavera e moída, servindo de oferenda portátil e nutritiva.</p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center bg-white p-4 rounded-3xl shadow-sm border border-gray-100 transition-transform duration-200 active:scale-[0.98]">
-                        <div class="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center text-red-500 shrink-0">
-                            <i class="fas fa-dove fa-2x"></i>
-                        </div>
-                        <div class="ml-4">
-                            <h4 class="font-bold text-gray-800">Zao Gao (枣糕)</h4>
-                            <p class="text-xs text-gray-500 mt-1">No norte, a massa fermentada é recheada com jujubas. Muitas vezes moldados em forma de andorinhas voadoras, chamados de "Zitui Yan" (子推燕 - Andorinhas de Zitui), e pendurados em ramos de salgueiro sobre as portas.</p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center bg-white p-4 rounded-3xl shadow-sm border border-gray-100 transition-transform duration-200 active:scale-[0.98]">
-                        <div class="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-500 shrink-0">
-                            <i class="fas fa-bowl-rice fa-2x"></i>
-                        </div>
-                        <div class="ml-4">
-                            <h4 class="font-bold text-gray-800">Arroz com Mostarda</h4>
-                            <p class="text-xs text-gray-500 mt-1">Prato típico de Min Dong apreciado durante a primavera. A tradição local atribui à mostarda colhida nesta estação o poder de proteger o corpo e a pele contra doenças ao longo de todo o ano.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="cultura" class="tab-content">
-                <div class="flex items-center mb-6">
-                    <div class="w-1.5 h-6 bg-purple-500 rounded-full mr-3 shadow-sm"></div>
-                    <h3 class="text-2xl font-serif text-qingming-dark font-bold">Crença, Poesia e Arte</h3>
-                </div>
-                
-                <div class="bg-[#F8F5F0] rounded-3xl p-6 shadow-sm border border-[#EBE5D9] mb-5 relative overflow-hidden transition-transform duration-200 active:scale-[0.98]">
-                    <i class="fas fa-quote-right absolute top-4 right-4 text-4xl text-[#EBE5D9] opacity-50"></i>
-                    <h4 class="font-bold text-gray-800 mb-3"><i class="fas fa-book-open mr-2 text-qingming-accent"></i> O Poema "Qingming"</h4>
-                    <p class="text-sm text-gray-700 italic mb-2 font-serif font-semibold">"清明时节雨纷纷，路上行人欲断魂。"</p>
-                    <p class="text-xs text-gray-500 leading-relaxed mb-3">
-                        "Na época de Qingming a chuva cai fina e constante,<br>Na estrada, a alma do viajante parece se partir."
+                    <p class="text-sm text-gray-600 mb-5 leading-relaxed">
+                        A configuração atual do Qingming possui mais de 2.500 anos e é a fusão orgânica de três tradições ancestrais distintas:
                     </p>
-                    <p class="text-xs text-gray-600">A clássica obra-prima de <b>Du Mu</b> (Dinastia Tang) cristalizou no imaginário chinês a melancolia psicológica ligada às garoas primaveris deste festival.</p>
-                </div>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-white rounded-3xl p-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 relative overflow-hidden transition-transform duration-200 active:scale-[0.98]">
+                            <div class="absolute top-0 right-0 w-16 h-16 bg-green-50 rounded-bl-full -z-0"></div>
+                            <div class="flex items-center mb-2 text-qingming-green relative z-10">
+                                <i class="fas fa-sun fa-lg w-8"></i>
+                                <h4 class="font-bold text-md">1. O Termo Solar (Jiéqì)</h4>
+                            </div>
+                            <p class="text-sm text-gray-600 leading-relaxed relative z-10">
+                                Único dos 24 termos solares a evoluir para feriado nacional. Originalmente, era um marcador agrário vital. O ditado "清明前后，种瓜点豆" (Antes e depois do Qingming, plante melões e feijões) destaca seu papel no despertar da agricultura.
+                            </p>
+                        </div>
 
-                <div class="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-3xl p-6 shadow-sm border border-amber-100 mb-5 transition-transform duration-200 active:scale-[0.98]">
-                    <h4 class="font-bold text-amber-800 mb-3 flex items-center"><i class="fas fa-dharmachakra mr-2 text-qingming-buddhist"></i> A Perspectiva Budista</h4>
-                    <p class="text-sm text-gray-700 leading-relaxed">
-                        No Budismo chinês, o festival alinha-se ao conceito de piedade filial. Contudo, rejeita o sacrifício de animais ou a queima excessiva de papel (visto como impacto ambiental negativo). A verdadeira ajuda aos ancestrais vem de <b>dedicar méritos</b> — praticando bondade, consumindo comida vegetariana, oferecendo flores frescas aos túmulos e recitando sutras sagrados (como o Sutra de Ksitigarbha) para auxiliá-los a transcender o ciclo do sofrimento (Samsara).
+                        <div class="bg-white rounded-3xl p-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 relative overflow-hidden transition-transform duration-200 active:scale-[0.98]">
+                            <div class="absolute top-0 right-0 w-16 h-16 bg-blue-50 rounded-bl-full -z-0"></div>
+                            <div class="flex items-center mb-2 text-blue-500 relative z-10">
+                                <i class="fas fa-snowflake fa-lg w-8"></i>
+                                <h4 class="font-bold text-md">2. Festival Hanshi (Comida Fria)</h4>
+                            </div>
+                            <p class="text-sm text-gray-600 leading-relaxed relative z-10">
+                                Nasceu da trágica lenda de Jiè Zǐtuī (Dinastia Zhou), um súdito leal que cortou a própria carne para alimentar seu senhor, mas morreu queimado na floresta. Em luto, o Duque Wen declarou um período de proibição de fogueiras, originando a tradição de consumir apenas comidas frias (Hánshí).
+                            </p>
+                        </div>
+
+                        <div class="bg-white rounded-3xl p-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 relative overflow-hidden transition-transform duration-200 active:scale-[0.98]">
+                            <div class="absolute top-0 right-0 w-16 h-16 bg-purple-50 rounded-bl-full -z-0"></div>
+                            <div class="flex items-center mb-2 text-purple-500 relative z-10">
+                                <i class="fas fa-water fa-lg w-8"></i>
+                                <h4 class="font-bold text-md">3. Festival Shangsi (Shàngsì)</h4>
+                            </div>
+                            <p class="text-sm text-gray-600 leading-relaxed relative z-10">
+                                Antigo rito de purificação realizado no 3º dia do 3º mês lunar nas margens dos rios para afastar más energias. Dele o Qingming herdou a tradição do <i>Tàqīng</i> (Passeio no Verde) e as celebrações primaveris de vitalidade.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="rituais" class="tab-content">
+                    <div class="flex items-center mb-6">
+                        <div class="w-1.5 h-6 bg-qingming-green rounded-full mr-3 shadow-sm"></div>
+                        <h3 class="text-2xl font-serif text-qingming-dark font-bold">Luto e Vitalidade</h3>
+                    </div>
+                    
+                    <p class="text-sm text-gray-600 mb-5 leading-relaxed">
+                        A dualidade do festival equilibra a solene piedade filial confucionista (孝) com intensas atividades ao ar livre para purgar o frio do inverno.
                     </p>
-                </div>
 
-                <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 transition-transform duration-200 active:scale-[0.98]">
-                    <h4 class="font-bold text-gray-800 mb-2 flex items-center"><i class="fas fa-palette mr-2 text-purple-500"></i> O Rolo de Qingming</h4>
-                    <p class="text-sm text-gray-600 leading-relaxed">A pintura <i>Qingming Shanghe Tu</i> de Zhang Zeduan (Dinastia Song) é o maior tesouro pictórico chinês. Mais que o luto, revela a colossal prosperidade da capital Kaifeng. <b>Mistério moderno:</b> Estudiosos recentes debatem se a pintura retrata de fato a primavera (Qingming) ou o outono, observando detalhes climáticos sutis na obra.</p>
-                </div>
-            </section>
+                    <div class="grid grid-cols-1 gap-4">
+                        <div class="bg-white p-5 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border-l-4 border-l-gray-500 transition-transform duration-200 active:scale-[0.98]">
+                            <h4 class="font-bold text-gray-800 flex items-center mb-2"><i class="fas fa-broom w-6 text-gray-500"></i> Limpeza de Túmulos (Sǎomù)</h4>
+                            <p class="text-sm text-gray-600">O ato de "varrer os túmulos" (Sǎomù). As famílias removem ervas daninhas, repintam inscrições desbotadas e oferecem incenso, chá, vinho e papel-moeda, conectando-se espiritualmente aos ancestrais.</p>
+                        </div>
 
-            <section id="hoje" class="tab-content">
-                <div class="flex items-center mb-6">
-                    <div class="w-1.5 h-6 bg-cyan-500 rounded-full mr-3 shadow-sm"></div>
-                    <h3 class="text-2xl font-serif text-qingming-dark font-bold">O Tradicional no Século XXI</h3>
-                </div>
-                
-                <p class="text-sm text-gray-600 mb-5 leading-relaxed">
-                    Como conciliar ritos antigos em megacidades altamente conectadas? O Qingming moderno navega entre subsídios ecológicos, serviços em nuvem e a preservação de raízes ultramarinas.
-                </p>
+                        <div class="bg-white p-5 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border-l-4 border-l-green-500 transition-transform duration-200 active:scale-[0.98]">
+                            <h4 class="font-bold text-gray-800 flex items-center mb-2"><i class="fas fa-tree w-6 text-green-500"></i> Ramos de Salgueiro (Chāliǔ)</h4>
+                            <p class="text-sm text-gray-600">Ramos de salgueiro são usados no cabelo ou pendurados nas portas. Conhecido como "madeira que afasta fantasmas" (鬼怖木) por influência budista. A tradição também carrega um famoso ditado sobre longevidade: "Se não usar salgueiro no Qingming, o rosto jovem logo terá cabelos brancos" (清明不戴柳，红颜成皓首).</p>
+                        </div>
 
-                <div class="space-y-4">
-                    <div class="bg-white rounded-3xl p-6 shadow-sm border-l-4 border-l-emerald-500 transition-transform duration-200 active:scale-[0.98]">
-                        <h4 class="font-bold text-gray-800 mb-2 flex items-center"><i class="fas fa-seedling mr-2 text-emerald-600"></i> Crise de Espaço e Enterro Ecológico</h4>
-                        <p class="text-sm text-gray-600">Com covas em grandes cidades custando fortunas, governos como o de Xangai oferecem subsídios de até 3.000 yuan para promover enterros no mar ou sob árvores. A filosofia evolui de "descansar na terra" para "retornar de volta à natureza", quebrando um tabu milenar.</p>
+                        <div class="bg-white p-5 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border-l-4 border-l-blue-400 transition-transform duration-200 active:scale-[0.98]">
+                            <h4 class="font-bold text-gray-800 flex items-center mb-2"><i class="fas fa-paper-plane w-6 text-blue-500"></i> Pipas Noturnas (Fàng Fēngzhēng)</h4>
+                            <p class="text-sm text-gray-600">Empinadas dia e noite. À noite, pequenas lanternas coloridas ("lanternas divinas") são amarradas à linha. Tradicionalmente, corta-se a linha para que a pipa voe longe, simbolizando o desapego de doenças e infortúnios.</p>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border-l-4 border-l-orange-500 transition-transform duration-200 active:scale-[0.98]">
+                            <h4 class="font-bold text-gray-800 flex items-center mb-2"><i class="fas fa-futbol w-6 text-orange-500"></i> Cuju, Balanços e Bahe</h4>
+                            <p class="text-sm text-gray-600">Para evitar que o corpo adoecesse devido à ingestão de apenas comida fria, esportes vigorosos tornaram-se tradição: o <i>Cùjú</i> (futebol antigo), os Balanços (feitos em galhos de árvores) e o <i>Báhé</i> (Cabo de Guerra, originalmente para orar por colheitas).</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="sabores" class="tab-content">
+                    <div class="flex items-center mb-6">
+                        <div class="w-1.5 h-6 bg-qingming-accent rounded-full mr-3 shadow-sm"></div>
+                        <h3 class="text-2xl font-serif text-qingming-dark font-bold">Gastronomia Hanshi</h3>
+                    </div>
+                    
+                    <p class="text-sm text-gray-600 mb-5 leading-relaxed">
+                        A antiga restrição de não acender o fogo gerou uma culinária engenhosa de alimentos duráveis e sazonais, repletos de simbolismo geográfico.
+                    </p>
+                    
+                    <div class="flex flex-col space-y-4">
+                        <div class="flex items-center bg-white p-4 rounded-3xl shadow-sm border border-gray-100 transition-transform duration-200 active:scale-[0.98]">
+                            <div class="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center text-green-600 shrink-0">
+                                <i class="fas fa-leaf fa-2x"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="font-bold text-gray-800">Qingtuan (Qīngtuán / 青团)</h4>
+                                <p class="text-xs text-gray-500 mt-1">Símbolo do sul (Jiāngnán). Bolinhos de farinha de arroz glutinoso tingidos de verde com sumo de ervas selvagens (como artemísia), tradicionalmente recheados com pasta de feijão ou carne, ganhando também inovações modernas como gema de ovo salgada com carne seca.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center bg-white p-4 rounded-3xl shadow-sm border border-gray-100 transition-transform duration-200 active:scale-[0.98]">
+                            <div class="w-16 h-16 bg-yellow-50 rounded-2xl flex items-center justify-center text-yellow-600 shrink-0">
+                                <i class="fas fa-cookie-bite fa-2x"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="font-bold text-gray-800">Sanzi (Sǎnzi / 馓子)</h4>
+                                <p class="text-xs text-gray-500 mt-1">Massa fina e frita, trançada e extremamente crocante, feita principalmente de trigo no norte e de farinha de arroz no sul da China. Popular tanto entre a etnia Han (Hàn) quanto entre diversas minorias no norte e oeste da China.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center bg-white p-4 rounded-3xl shadow-sm border border-gray-100 transition-transform duration-200 active:scale-[0.98]">
+                            <div class="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 shrink-0">
+                                <i class="fas fa-seedling fa-2x"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="font-bold text-gray-800">Nuan Gu Bao (Nuǎn Gū Bāo / 暖菇包)</h4>
+                                <p class="text-xs text-gray-500 mt-1">Típico de Taining (Fujian). Pãezinhos feitos com a erva selvagem <i>Nuan Gu</i> (Gnaphalium), colhida na primavera e moída, servindo de oferenda portátil e nutritiva.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center bg-white p-4 rounded-3xl shadow-sm border border-gray-100 transition-transform duration-200 active:scale-[0.98]">
+                            <div class="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center text-red-500 shrink-0">
+                                <i class="fas fa-dove fa-2x"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="font-bold text-gray-800">Zao Gao (Zǎo Gāo / 枣糕)</h4>
+                                <p class="text-xs text-gray-500 mt-1">No norte, a massa fermentada é recheada com jujubas. Muitas vezes moldados em forma de andorinhas voadoras, chamados de "Zitui Yan" (Zǐtuī Yàn / 子推燕 - Andorinhas de Zitui), e pendurados em ramos de salgueiro sobre as portas.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center bg-white p-4 rounded-3xl shadow-sm border border-gray-100 transition-transform duration-200 active:scale-[0.98]">
+                            <div class="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-500 shrink-0">
+                                <i class="fas fa-bowl-rice fa-2x"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="font-bold text-gray-800">Arroz com Mostarda</h4>
+                                <p class="text-xs text-gray-500 mt-1">Prato típico de Min Dong apreciado durante a primavera. A tradição local atribui à mostarda colhida nesta estação o poder de proteger o corpo e a pele contra doenças ao longo de todo o ano.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="cultura" class="tab-content">
+                    <div class="flex items-center mb-6">
+                        <div class="w-1.5 h-6 bg-purple-500 rounded-full mr-3 shadow-sm"></div>
+                        <h3 class="text-2xl font-serif text-qingming-dark font-bold">Crença, Poesia e Arte</h3>
+                    </div>
+                    
+                    <div class="bg-[#F8F5F0] rounded-3xl p-6 shadow-sm border border-[#EBE5D9] mb-5 relative overflow-hidden transition-transform duration-200 active:scale-[0.98]">
+                        <i class="fas fa-quote-right absolute top-4 right-4 text-4xl text-[#EBE5D9] opacity-50"></i>
+                        <h4 class="font-bold text-gray-800 mb-3"><i class="fas fa-book-open mr-2 text-qingming-accent"></i> O Poema "Qingming"</h4>
+                        <p class="text-sm text-gray-700 italic mb-2 font-serif font-semibold">"清明时节雨纷纷，路上行人欲断魂。"</p>
+                        <p class="text-xs text-gray-500 leading-relaxed mb-3">
+                            "Na época de Qingming a chuva cai fina e constante,<br>Na estrada, a alma do viajante parece se partir."
+                        </p>
+                        <p class="text-xs text-gray-600">A clássica obra-prima de <b>Du Mu (Dù Mù)</b> (Dinastia Tang) cristalizou no imaginário chinês a melancolia psicológica ligada às garoas primaveris deste festival.</p>
                     </div>
 
-                    <div class="bg-white rounded-3xl p-6 shadow-sm border-l-4 border-l-red-500 transition-transform duration-200 active:scale-[0.98]">
-                        <h4 class="font-bold text-gray-800 mb-2 flex items-center"><i class="fas fa-fire-extinguisher mr-2 text-red-600"></i> Superstição ou Cultura Popular?</h4>
-                        <p class="text-sm text-gray-600">As réplicas de papel para os mortos (Zhizha) hoje incluem até iPhones e carros virtuais. Proibições estatais contra a queima de moedas de papel (risco de fogo/poluição) geram acalorados debates legais: estariam as leis apagando um patrimônio afetivo e cultural sob o argumento de "superstição feudal"?</p>
+                    <div class="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-3xl p-6 shadow-sm border border-amber-100 mb-5 transition-transform duration-200 active:scale-[0.98]">
+                        <h4 class="font-bold text-amber-800 mb-3 flex items-center"><i class="fas fa-dharmachakra mr-2 text-qingming-buddhist"></i> A Perspectiva Budista</h4>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            No Budismo chinês, o festival alinha-se ao conceito de piedade filial. Contudo, rejeita o sacrifício de animais ou a queima excessiva de papel (visto como impacto ambiental negativo). A verdadeira ajuda aos ancestrais vem de <b>dedicar méritos</b> — praticando bondade, consumindo comida vegetariana, oferecendo flores frescas aos túmulos e recitando sutras sagrados (como o Sutra de Ksitigarbha) para auxiliá-los a transcender o ciclo do sofrimento (Samsara).
+                        </p>
                     </div>
 
-                    <div class="bg-white rounded-3xl p-6 shadow-sm border-l-4 border-l-blue-500 transition-transform duration-200 active:scale-[0.98]">
-                        <h4 class="font-bold text-gray-800 mb-2 flex items-center"><i class="fas fa-cloud mr-2 text-blue-600"></i> Varredura na Nuvem ("Daisao")</h4>
-                        <p class="text-sm text-gray-600">Plataformas como o WeChat permitem acender "velas de pixel" e criar memoriais online permanentes. Mais polêmico é o "Daisao" (Varredura Substituta): empresas pagas para ir ao túmulo transmitir a cerimônia (e até mesmo chorar) ao vivo para quem não pôde viajar.</p>
+                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 transition-transform duration-200 active:scale-[0.98]">
+                        <h4 class="font-bold text-gray-800 mb-2 flex items-center"><i class="fas fa-palette mr-2 text-purple-500"></i> O Rolo de Qingming</h4>
+                        <p class="text-sm text-gray-600 leading-relaxed">A pintura <i>Qīngmíng Shànghé Tú</i> de Zhang Zeduan (Zhāng Zéduān) (Dinastia Song) é o maior tesouro pictórico chinês. Mais que o luto, revela a colossal prosperidade da capital Kaifeng. <b>Mistério moderno:</b> Estudiosos recentes debatem se a pintura retrata de fato a primavera (Qingming) ou o outono, observando detalhes climáticos sutis na obra.</p>
                     </div>
+                </section>
 
-                    <div class="bg-white rounded-3xl p-6 shadow-sm border-l-4 border-l-pink-500 transition-transform duration-200 active:scale-[0.98]">
-                        <h4 class="font-bold text-gray-800 mb-2 flex items-center"><i class="fas fa-globe-asia mr-2 text-pink-600"></i> A Âncora da Diáspora (Xungen)</h4>
-                        <p class="text-sm text-gray-600">Para os chineses ultramarinos na Malásia, Tailândia ou Indonésia, o Qingming é resistência. Visitar as "Montanhas da Justiça" (cemitérios públicos comunitários, como o Bukit Cina) e usar banhos de folhas de artemísia mantém viva a linhagem ("Xungen" - buscar as raízes) contra a total assimilação cultural estrangeira.</p>
+                <section id="hoje" class="tab-content">
+                    <div class="flex items-center mb-6">
+                        <div class="w-1.5 h-6 bg-cyan-500 rounded-full mr-3 shadow-sm"></div>
+                        <h3 class="text-2xl font-serif text-qingming-dark font-bold">O Tradicional no Século XXI</h3>
                     </div>
-                </div>
-            </section>
+                    
+                    <p class="text-sm text-gray-600 mb-5 leading-relaxed">
+                        Como conciliar ritos antigos em megacidades altamente conectadas? O Qingming moderno navega entre subsídios ecológicos, serviços em nuvem e a preservação de raízes ultramarinas.
+                    </p>
 
+                    <div class="space-y-4">
+                        <div class="bg-white rounded-3xl p-6 shadow-sm border-l-4 border-l-emerald-500 transition-transform duration-200 active:scale-[0.98]">
+                            <h4 class="font-bold text-gray-800 mb-2 flex items-center"><i class="fas fa-seedling mr-2 text-emerald-600"></i> Crise de Espaço e Enterro Ecológico</h4>
+                            <p class="text-sm text-gray-600">Com covas em grandes cidades custando fortunas, governos como o de Xangai oferecem subsídios de até 3.000 yuan para promover enterros no mar ou sob árvores. A filosofia evolui de "descansar na terra" para "retornar de volta à natureza", quebrando um tabu milenar.</p>
+                        </div>
+
+                        <div class="bg-white rounded-3xl p-6 shadow-sm border-l-4 border-l-red-500 transition-transform duration-200 active:scale-[0.98]">
+                            <h4 class="font-bold text-gray-800 mb-2 flex items-center"><i class="fas fa-fire-extinguisher mr-2 text-red-600"></i> Superstição ou Cultura Popular?</h4>
+                            <p class="text-sm text-gray-600">As réplicas de papel para os mortos (Zhizha / Zhǐzhā) hoje incluem até iPhones e carros virtuais. Proibições estatais contra a queima de moedas de papel (risco de fogo/poluição) geram acalorados debates legais: estariam as leis apagando um patrimônio afetivo e cultural sob o argumento de "superstição feudal"?</p>
+                        </div>
+
+                        <div class="bg-white rounded-3xl p-6 shadow-sm border-l-4 border-l-blue-500 transition-transform duration-200 active:scale-[0.98]">
+                            <h4 class="font-bold text-gray-800 mb-2 flex items-center"><i class="fas fa-cloud mr-2 text-blue-600"></i> Varredura na Nuvem ("Daisao")</h4>
+                            <p class="text-sm text-gray-600">Plataformas como o WeChat permitem acender "velas de pixel" e criar memoriais online permanentes. Mais polêmico é o "Daisao" (Dàisǎo - Varredura Substituta): empresas pagas para ir ao túmulo transmitir a cerimônia (e até mesmo chorar) ao vivo para quem não pôde viajar.</p>
+                        </div>
+
+                        <div class="bg-white rounded-3xl p-6 shadow-sm border-l-4 border-l-pink-500 transition-transform duration-200 active:scale-[0.98]">
+                            <h4 class="font-bold text-gray-800 mb-2 flex items-center"><i class="fas fa-globe-asia mr-2 text-pink-600"></i> A Âncora da Diáspora (Xungen)</h4>
+                            <p class="text-sm text-gray-600">Para os chineses ultramarinos na Malásia, Tailândia ou Indonésia, o Qingming é resistência. Visitar as "Montanhas da Justiça" (cemitérios públicos comunitários, como o Bukit Cina) e usar banhos de folhas de artemísia mantém viva a linhagem ("Xungen" / Xúngēn - buscar as raízes) contra a total assimilação cultural estrangeira.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
         </main>
         
         <nav class="absolute bottom-0 w-full max-w-md bg-white border-t border-gray-100 shadow-up pb-safe z-30 rounded-t-3xl pb-safe">
@@ -416,7 +405,6 @@
     </div>
 
     <script>
-        // Lógica de troca de abas
         function openTab(tabId, btn) {
             document.querySelectorAll('.tab-content').forEach(el => {
                 el.classList.remove('active');
@@ -428,43 +416,26 @@
             });
             btn.classList.add('active');
 
-            // Scroll para o topo ao trocar de aba (naturalmente abre o header)
-            document.getElementById('scroll-area').scrollTo({ top: 0, behavior: 'smooth' });
+            // Scroll para o topo e reabre o cabeçalho suavemente
+            const scrollArea = document.getElementById('scroll-area');
+            scrollArea.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // --- SISTEMA AVANÇADO DE HEADER FLUTUANTE ---
+        // --- SISTEMA FLUIDO SEM BURACÃO ---
         const scrollArea = document.getElementById('scroll-area');
         const header = document.getElementById('app-header');
-        const spacer = document.getElementById('header-spacer');
         let isScrolled = false;
 
-        // Calcula dinamicamente o tamanho do header para ajustar o texto perfeitamente embaixo
-        function updateSpacer() {
-            // Só recalcula se estivermos no topo (header todo aberto)
-            if (!isScrolled) {
-                // Diminui um tiquinho (15px) pra não ficar um buraco vazio quando parar o scroll
-                spacer.style.height = (header.offsetHeight - 15) + 'px'; 
-            }
-        }
-
-        // Executa na carga inicial
-        updateSpacer();
-
-        // O ResizeObserver é poderoso: se a fonte do Google carregar depois e alterar 
-        // o tamanho das letras, ele corrige o espaçamento magicamente.
-        new ResizeObserver(updateSpacer).observe(header);
-
-        // Ouve a rolagem do texto (agora ele rola LISO, sem brigar com o header)
         scrollArea.addEventListener('scroll', () => {
             const currentScroll = scrollArea.scrollTop;
             
-            // Ativa o encolhimento se descer mais de 50px
-            if (currentScroll > 50 && !isScrolled) {
+            // Só ativa quando descer bastante para evitar que a tela pule do nada
+            if (currentScroll > 80 && !isScrolled) {
                 header.classList.add('scrolled');
                 isScrolled = true;
             } 
-            // Só volta a abrir se colar lá no teto (10px)
-            else if (currentScroll <= 10 && isScrolled) {
+            // Só volta a abrir se chegar quase no topo da tela, matando a tremedeira
+            else if (currentScroll <= 20 && isScrolled) {
                 header.classList.remove('scrolled');
                 isScrolled = false;
             }
