@@ -31,14 +31,14 @@
             }
         }
     </script>
-<style>
+    <style>
         /* Oculta scrollbar mas mantém a rolagem suave */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; scroll-behavior: smooth; }
         
         /* Ajuste para dispositivos móveis modernos (iPhone X+, Androids sem borda) */
         .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
-        .pt-safe { padding-top: env(safe-area-inset-top); }
+        .pt-safe { padding-top: env(safe-area-inset-top, 20px); }
 
         /* Animações de entrada para as abas */
         .tab-content {
@@ -79,68 +79,87 @@
             border-radius: 50%;
         }
 
-/* --- EFEITOS DO HEADER DINÂMICO --- */
+        /* --- EFEITOS DO HEADER DINÂMICO PREMIUM --- */
         #app-header {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            /* Transição estilo "Mola" nativa da Apple/Android */
+            transition: all 0.5s cubic-bezier(0.3, 1, 0.3, 1);
         }
         #app-header.scrolled {
-            padding-top: max(env(safe-area-inset-top), 1rem);
-            padding-bottom: 0.75rem;
+            padding-bottom: 1rem;
             border-bottom-left-radius: 1.5rem;
             border-bottom-right-radius: 1.5rem;
+        }
+        .bg-layer {
+            transition: all 0.5s cubic-bezier(0.3, 1, 0.3, 1);
         }
         #app-header.scrolled .bg-layer {
             border-bottom-left-radius: 1.5rem;
             border-bottom-right-radius: 1.5rem;
         }
+        
+        /* Oculta suavemente sem mexer no layout do scroll */
         .hide-on-scroll {
-            overflow: hidden; /* Impede o texto de vazar e bugar o layout */
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s cubic-bezier(0.3, 1, 0.3, 1);
+            max-height: 200px; /* Grande o suficiente para o texto */
+            opacity: 1;
+            overflow: hidden;
+            transform-origin: top;
         }
         #app-header.scrolled .hide-on-scroll {
-            max-height: 0 !important;
+            max-height: 0;
             opacity: 0;
-            margin-bottom: 0;
-            transform: scaleY(0);
+            margin-bottom: 0 !important;
+            transform: translateY(-15px) scaleY(0.8);
+        }
+
+        /* Títulos */
+        #main-title {
+            transition: all 0.5s cubic-bezier(0.3, 1, 0.3, 1);
+            transform-origin: left center;
         }
         #app-header.scrolled #main-title {
-            font-size: 2.25rem; /* text-4xl */
-            margin-bottom: 0;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: scale(0.65); /* Diminui a fonte visualmente sem causar lag de renderização */
         }
+        
         .show-on-scroll {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            max-width: 0;
+            transform: translateX(15px);
+            transition: all 0.5s cubic-bezier(0.3, 1, 0.3, 1);
+            overflow: hidden;
         }
         #app-header.scrolled .show-on-scroll {
             opacity: 1;
             max-width: 200px;
+            transform: translateX(0);
         }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-800 font-sans antialiased flex justify-center selection:bg-qingming-accent selection:text-white">
 
-    <div class="w-full max-w-md bg-qingming-light h-[100dvh] shadow-2xl relative flex flex-col overflow-hidden">
+    <div class="w-full max-w-md bg-qingming-light h-[100dvh] shadow-2xl relative overflow-hidden">
         
-<header id="app-header" class="relative bg-qingming-dark text-white pt-10 pb-8 px-6 rounded-b-[2.5rem] shadow-md shrink-0 z-10 pt-safe">
-            <div class="bg-layer absolute inset-0 overflow-hidden rounded-b-[2.5rem] opacity-25 transition-all duration-400">
+        <!-- HEADER AGORA É FLUTUANTE (ABSOLUTE) E INDEPENDENTE -->
+        <header id="app-header" class="absolute top-0 left-0 w-full bg-qingming-dark text-white pt-10 pb-8 px-6 rounded-b-[2.5rem] shadow-md z-20 pt-safe">
+            <div class="bg-layer absolute inset-0 overflow-hidden rounded-b-[2.5rem] opacity-25">
                 <img src="https://images.unsplash.com/photo-1555448248-2571daf6344b?auto=format&fit=crop&w=800&q=80" alt="Paisagem de natureza" class="w-full h-full object-cover">
             </div>
-            <div class="bg-layer absolute inset-0 bg-gradient-to-t from-qingming-dark via-qingming-dark/80 to-transparent opacity-90 rounded-b-[2.5rem] transition-all duration-400"></div>
+            <div class="bg-layer absolute inset-0 bg-gradient-to-t from-qingming-dark via-qingming-dark/80 to-transparent opacity-90 rounded-b-[2.5rem]"></div>
             
-            <div class="relative z-10">
-                <div class="hide-on-scroll flex justify-between items-center mb-3 origin-top max-h-[50px]">
+            <div class="relative z-10 flex flex-col justify-end">
+                <div class="hide-on-scroll flex justify-between items-center mb-3">
                     <span class="px-3 py-1 bg-white/20 rounded-full text-[10px] font-bold tracking-wider backdrop-blur-sm border border-white/30 uppercase shadow-sm">Abril • 15º dia após o Equinócio da Primavera</span>
                     <i class="fas fa-leaf text-qingming-accent drop-shadow-md"></i>
                 </div>
                 
-                <div class="flex justify-between items-center gap-3">
-                    <h1 id="main-title" class="text-5xl font-serif font-bold mb-1 tracking-wide flex items-baseline drop-shadow-lg origin-left">
+                <div class="flex items-center gap-3">
+                    <h1 id="main-title" class="text-5xl font-serif font-bold mb-1 tracking-wide drop-shadow-lg flex items-baseline">
                         清明节
                     </h1>
-                    <h2 class="show-on-scroll text-xl font-serif font-semibold drop-shadow-md opacity-0 max-w-0 overflow-hidden whitespace-nowrap">Qingming Jie</h2>
+                    <h2 class="show-on-scroll text-xl font-serif font-semibold drop-shadow-md whitespace-nowrap mt-2">Qingming Jie</h2>
                 </div>
 
-                <div class="hide-on-scroll origin-top max-h-[150px]">
+                <div class="hide-on-scroll mt-1">
                     <h2 class="text-2xl font-serif font-semibold mb-2 drop-shadow-md">Qingming Jie</h2>
                     <p class="text-sm font-light text-gray-200 leading-relaxed opacity-95">
                         Festival da Claridade Pura. Uma síntese complexa entre a reverência aos ancestrais (Shen Zhong Zhui Yuan) e a efervescência da primavera.
@@ -149,7 +168,11 @@
             </div>
         </header>
 
-        <main id="scroll-area" class="flex-grow overflow-y-auto p-5 pb-32 no-scrollbar bg-qingming-light">
+        <!-- MAIN OCUPA A TELA TODA E PASSA POR BAIXO DO HEADER (INSET-0) -->
+        <main id="scroll-area" class="absolute inset-0 overflow-y-auto p-5 pb-32 no-scrollbar bg-qingming-light z-10">
+            
+            <!-- ESPAÇADOR: Empurra o texto pra baixo pra não esconder no carregamento inicial -->
+            <div id="header-spacer" class="w-full shrink-0"></div>
             
             <section id="origens" class="tab-content active">
                 <div class="flex items-center mb-6">
@@ -356,7 +379,7 @@
 
         </main>
         
-        <nav class="absolute bottom-0 w-full max-w-md bg-white border-t border-gray-100 shadow-up pb-safe z-50 rounded-t-3xl pb-safe">
+        <nav class="absolute bottom-0 w-full max-w-md bg-white border-t border-gray-100 shadow-up pb-safe z-30 rounded-t-3xl pb-safe">
             <ul class="flex justify-between items-center text-[10px] font-semibold text-gray-400 pt-3 pb-4 px-3">
                 <li class="flex-1 text-center">
                     <button onclick="openTab('origens', this)" class="nav-item active w-full flex flex-col items-center gap-1 focus:outline-none">
@@ -392,8 +415,8 @@
         </nav>
     </div>
 
-<script>
-        // Lógica de troca de abas (Tabs) para o App
+    <script>
+        // Lógica de troca de abas
         function openTab(tabId, btn) {
             document.querySelectorAll('.tab-content').forEach(el => {
                 el.classList.remove('active');
@@ -405,25 +428,43 @@
             });
             btn.classList.add('active');
 
-            // Scroll suave para o topo
+            // Scroll para o topo ao trocar de aba (naturalmente abre o header)
             document.getElementById('scroll-area').scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Lógica de encolhimento dinâmico do Header com Histerese (Antiglide)
+        // --- SISTEMA AVANÇADO DE HEADER FLUTUANTE ---
         const scrollArea = document.getElementById('scroll-area');
         const header = document.getElementById('app-header');
+        const spacer = document.getElementById('header-spacer');
         let isScrolled = false;
 
+        // Calcula dinamicamente o tamanho do header para ajustar o texto perfeitamente embaixo
+        function updateSpacer() {
+            // Só recalcula se estivermos no topo (header todo aberto)
+            if (!isScrolled) {
+                // Diminui um tiquinho (15px) pra não ficar um buraco vazio quando parar o scroll
+                spacer.style.height = (header.offsetHeight - 15) + 'px'; 
+            }
+        }
+
+        // Executa na carga inicial
+        updateSpacer();
+
+        // O ResizeObserver é poderoso: se a fonte do Google carregar depois e alterar 
+        // o tamanho das letras, ele corrige o espaçamento magicamente.
+        new ResizeObserver(updateSpacer).observe(header);
+
+        // Ouve a rolagem do texto (agora ele rola LISO, sem brigar com o header)
         scrollArea.addEventListener('scroll', () => {
             const currentScroll = scrollArea.scrollTop;
             
-            // Só encolhe se a pessoa descer de forma intencional (mais de 60px)
-            if (currentScroll > 60 && !isScrolled) {
+            // Ativa o encolhimento se descer mais de 50px
+            if (currentScroll > 50 && !isScrolled) {
                 header.classList.add('scrolled');
                 isScrolled = true;
             } 
-            // Só volta a expandir se a pessoa subir quase de volta ao topo absoluto (menos de 15px)
-            else if (currentScroll < 15 && isScrolled) {
+            // Só volta a abrir se colar lá no teto (10px)
+            else if (currentScroll <= 10 && isScrolled) {
                 header.classList.remove('scrolled');
                 isScrolled = false;
             }
